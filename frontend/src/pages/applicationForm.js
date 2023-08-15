@@ -17,20 +17,20 @@ const ApplicationForm = ({sharedState, onStateChange}) => {
       event.preventDefault();
       navigate('/home')
 
-      const name = {name:fullname,dob:dob,phoneno:phoneno,aadhar:aadharno,pancard:panno}
-      onStateChange(name)
+      const name = {name:fullname,dob:dob,phone_number:phoneno,aadhar_number:aadharno,pancard_number:panno}
+      
   
       // Make HTTP request to server-side endpoint
-        //   fetch("http://127.0.0.1:8000/users/", {
-        //     method: "POST",
-        //     body: JSON.stringify({ fullname, dob, phoneno, aadharno, panno }),
-        //     headers: {
-        //       "Content-Type": "application/json",
-        //     },
-        //   })
-        //     .then((response) => response.json())
-        //     .then((data) => console.log(data))
-        //     .catch((error) => console.error(error));
+          fetch("http://192.168.1.13:5000/application_form", {
+            method: "POST",
+            body: JSON.stringify(name),
+            headers: {
+              "Content-Type": "application/json",
+            },
+          })
+            .then((response) => response.json())
+            .then((data) => console.log(data))
+            .catch((error) => console.error(error));
   
     
     };
@@ -93,7 +93,7 @@ const ApplicationForm = ({sharedState, onStateChange}) => {
             <label htmlFor="panno">Pan Card No</label>
             <input
               className=" border p-2"
-              type="number"
+              type="text"
               id="panno"
               value={panno}
               onChange={(event) => setPanNo(event.target.value)}

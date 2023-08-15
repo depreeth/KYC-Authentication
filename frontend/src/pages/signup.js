@@ -3,6 +3,9 @@ import img1 from "../assets/login-bg.jpg";
 import {AiFillEyeInvisible,AiFillEye} from 'react-icons/ai'
 import { useNavigate } from 'react-router-dom';
 
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 const Signup = () => {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
@@ -12,27 +15,33 @@ const Signup = () => {
   const navigate = useNavigate ();
 
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
     // navigate('/login')
     
 
-    const emailRegex = /^\S+@\S+\.\S+$/;
-    // const passwordRegex = /^(?=.[A-Za-z])(?=.\d)[A-Za-z\d]{8,}$/;
-
-    if (!emailRegex.test(email)) {
-      alert('Please enter a valid email address.');
-      return;
-    }
-    else{
       const userObject = {
         username: username,
         email: email,
         password: password
       };
       // Make HTTP request to server-side endpoint
-          fetch("http://127.0.0.1:5000/signup", {
+          // fetch("http://192.168.1.13:5000/signup", {
+          //   method: "POST",
+          //   // mode : "no-cors",
+          //   body: JSON.stringify(userObject),
+          //   headers: {
+          //     "Content-Type": "application/json",
+          //   },
+          // })
+          //   .then((response) => response.json())
+          //   .then((data) => console.log(data))
+          //   .catch((error) => console.error(error));
+
+
+            try {
+             const response = await fetch("http://192.168.1.13:5000/signup", {
             method: "POST",
             // mode : "no-cors",
             body: JSON.stringify(userObject),
@@ -40,13 +49,26 @@ const Signup = () => {
               "Content-Type": "application/json",
             },
           })
-            .then((response) => response.json())
-            .then((data) => console.log(data))
-            .catch((error) => console.error(error));
+              const data = await response.json();
+              if(data.signup_status==="successful"){
+                navigate('/appform')
+                // toast("Wow s easy!");
+                
+              }else{
+                toast.error(data.error,{
+                  position:"top-right"
+                });
+                // alert(data.Error)
+              }
+              console.log(data);
+      
+            } catch (error) {
+              console.error(error);
+            }
   
-      navigate('/appform')
+      
 
-    }
+    
 
 
     // if (!passwordRegex.test(password)) {
@@ -117,6 +139,7 @@ const Signup = () => {
             </p>
           </div>
         </form>
+        <ToastContainer />
       </div>
       <div className="hidden  lg:block rounded-lg">
         <img className=" w-full h-screen object-cover" src={img1} alt="" />

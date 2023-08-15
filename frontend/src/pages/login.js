@@ -3,6 +3,9 @@ import img from "../assets/signup-bg.jpg";
 import { useNavigate } from "react-router-dom";
 import {AiFillEyeInvisible,AiFillEye} from 'react-icons/ai'
 
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -10,30 +13,50 @@ const Login = () => {
 
   const navigate = useNavigate ();
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     // navigate('/home')
 
     // Make HTTP request to server-side endpoint to authenticate user
-    fetch('http://127.0.0.1:8000/check_user/', {
-      method: 'POST',
-      body: JSON.stringify({ username, password }),
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    })
-      .then(response => response.json())
-      .then(data => {
-        if (data.success) {
-          // User is authenticated, do something
-          console.log('User authenticated');
+    const userObject = {
+      username: username,
+      password: password
+    };
+    // fetch('http://192.168.1.13:5000/login', {
+    //   method: 'POST',
+    //   body: JSON.stringify(userObject),
+    //   headers: {
+    //     'Content-Type': 'application/json'
+    //   }
+    // })
+    //   .then(response => response.json())
+    //   .then(data => {console.log(data)})
+    //   .catch(error => console.error(error));
+
+      try {
+        const response = await fetch('http://192.168.1.13:5000/login', {
+          method: 'POST',
+          body: JSON.stringify(userObject),
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+        const data = await response.json();
+        if(data.Message==="Successful login"){
           navigate('/home')
-        } else {
-          // User is not authenticated, prompt to register
-          alert('Invalid email or password. Please register if you are not already a user.');
+          // toast("Wow s easy!");
+          
+        }else{
+          toast.error(data.Error,{
+            position:"top-right"
+          });
+          // alert(data.Error)
         }
-      })
-      .catch(error => console.error(error));
+        console.log(data);
+
+      } catch (error) {
+        console.error(error);
+      }
   };
   console.log("username:", username);
   console.log("password:", password);
@@ -44,6 +67,7 @@ const Login = () => {
         <img className=" w-full h-screen object-cover" src={img} alt="" />
       </div>
       <div className=" bg-gray-100 flex flex-col justify-center rounded-lg">
+      
         <form
           //   action="/home"
           onSubmit={handleSubmit}
@@ -92,6 +116,7 @@ const Login = () => {
             </p>
             </div>
         </form>
+        <ToastContainer />
       </div>
     </div>
   );
